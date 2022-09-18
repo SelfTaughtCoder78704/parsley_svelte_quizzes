@@ -23,6 +23,8 @@ when you are ready to build the quiz, run the following command
 
 ## in the custom template add the following output from the svelte app you just built it is in dist/assets
 
+### Example:
+
 ```html
 <script type="module" crossorigin src="/index.0000000af.js"></script>
 <link rel="stylesheet" href="/index.0000000af.css" />
