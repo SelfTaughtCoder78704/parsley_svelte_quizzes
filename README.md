@@ -30,6 +30,9 @@ when you are ready to build the quiz, run the following command
 <link rel="stylesheet" href="/index.0000000af.css" />
 ```
 
+&#8593;
+RENAME THE FILES TO WHATEVER MAKES SENSE FOR YOUR QUIZ
+
 ## copy both of the above files into the public folder of your Rails app
 
 Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app
