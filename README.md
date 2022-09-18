@@ -37,8 +37,8 @@ RENAME THE FILES TO WHATEVER MAKES SENSE FOR YOUR QUIZ
 
 Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app
 
-
 ## in the Rails app use this code:
+
 ```yaml
 page_title: "Parsley Health"
 template: master_layout
@@ -47,4 +47,4 @@ content:
     template: svelte
 ```
 
-## in the custom folder add a new file called : Example: svelte.html.erb and leave it blank
+## in the custom folder add a new file called : Example: \_svelte.html.erb and leave it blank or if there is a blank template already there for this just use that one
