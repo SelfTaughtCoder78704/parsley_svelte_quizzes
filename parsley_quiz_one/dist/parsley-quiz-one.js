@@ -1735,7 +1735,7 @@ class ot extends L {
   }
 }
 var st = new ot({
-  target: document.body
+  target: document.getElementById("svelte-container")
 });
 export {
   st as default
