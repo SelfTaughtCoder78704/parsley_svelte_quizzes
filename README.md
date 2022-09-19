@@ -1,4 +1,6 @@
-## Clone this repo and create your own new folder i.e. "client_quiz_one"
+## Unless you are working on an existing quiz, clone this repo and create your own new folder i.e. "client_quiz_one"
+
+## For quiz specific documentation, see the README.md in the quiz folder
 
 cd into the folder
 `npm create vite@latest . -- --template svelte`
