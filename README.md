@@ -64,6 +64,15 @@ Step 2:
 - Do the same for the style tag.
 - If you changed the target then add the empty div with the id you used in the target.
 
+Example:
+
+```html
+<script type="module" crossorigin src="/quiz.js"></script>
+<link rel="stylesheet" href="/bundle.css" />
+
+<div id="svelte-container"></div>
+```
+
 Step 3:
 
 - Now add those assets to the public folder in your Rails app.
