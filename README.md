@@ -14,37 +14,30 @@ when you are ready to build the quiz, run the following command
 
 ## push to github
 
-## now in your Rails app, add the following to your controller
+## now in your Rails app, do the following:
 
+Step 1:
+* Add a custom template in the custom folder. Example:
+`_client_quiz_one.html.erb`
+Step 2:
+* Paste the script tag from the Svelte App -- located in the dist folder -- into the file just like when you install a tracking script.
+* Do the same for the style tag.
+Step 3:
+* Now add those assets to the public folder in your Rails app.
+NOTE:
+## Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app.
+Step 4:
+* Add your welcome controller but include the following code
+```ruby
 @svelte = 'true'
-@svelte_quiz = "client_quiz_one" # this is the same name as the folder you created in the previous step
-
-## in the custom folder add a new file called : Example: svelte_quiz_one.html.erb
-
-## in the custom template add the following output from the svelte app you just built it is in dist/assets
-
-### Example:
-
-```html
-<script type="module" crossorigin src="/index.0000000af.js"></script>
-<link rel="stylesheet" href="/index.0000000af.css" />
+@svelte_quiz = "client_quiz_one" # or the name you gave the custom template
+....
 ```
-
-&#8593;
-RENAME THE FILES TO WHATEVER MAKES SENSE FOR YOUR QUIZ
-
-## copy both of the above files into the public folder of your Rails app
-
-Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app
-
-## in the Rails app use this code:
-
+Step 5:
 ```yaml
 page_title: "Parsley Health"
 template: master_layout
 content:
   - type: custom
-    template: svelte
+    template: client_quiz_one
 ```
-
-## in the custom folder add a new file called : Example: \_svelte.html.erb and leave it blank or if there is a blank template already there for this just use that one
