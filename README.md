@@ -67,8 +67,8 @@ Step 2:
 Example:
 
 ```html
-<script type="module" crossorigin src="/quiz.js"></script>
-<link rel="stylesheet" href="/bundle.css" />
+<script type="module" crossorigin src="/client_quiz_one.js"></script>
+<link rel="stylesheet" href="/style.css" />
 
 <div id="svelte-container"></div>
 ```
