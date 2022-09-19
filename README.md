@@ -44,7 +44,7 @@ In main.js change the target to the element you want it in later or leave it as 
 var app = new App({
 	target: document.getElementById('svelte-container')
 });
-``
+```
 
 when you are ready to build the quiz, run the following command
 `npm run build`
