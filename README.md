@@ -72,16 +72,6 @@ Step 3:
 
 Step 4:
 
-- Add your welcome controller but include the following code
-
-```ruby
-@svelte = 'true'
-@svelte_quiz = "client_quiz_one" # or the name you gave the custom template
-....
-```
-
-Step 5:
-
 ```yaml
 page_title: "Parsley Health"
 template: master_layout
