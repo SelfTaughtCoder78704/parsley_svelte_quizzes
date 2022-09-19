@@ -40,9 +40,9 @@ export default defineConfig({
 
 In main.js change the target to the element you want it in later or leave it as is. Example:
 
-````js
+```js
 var app = new App({
-	target: document.getElementById('svelte-container')
+  target: document.getElementById("svelte-container"),
 });
 ```
 
@@ -67,8 +67,7 @@ Step 3:
 
 - Now add those assets to the public folder in your Rails app.
 
-
-##   NOTE: Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app.
+## NOTE: Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app.
 
 Step 4:
 
@@ -78,7 +77,7 @@ Step 4:
 @svelte = 'true'
 @svelte_quiz = "client_quiz_one" # or the name you gave the custom template
 ....
-````
+```
 
 Step 5:
 
