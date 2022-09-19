@@ -29,9 +29,9 @@ Step 2:
 Step 3:
 
 - Now add those assets to the public folder in your Rails app.
-  NOTE:
 
-## Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app.
+
+##   NOTE: Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app.
 
 Step 4:
 
