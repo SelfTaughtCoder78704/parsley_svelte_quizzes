@@ -1,4 +1,3 @@
-
 <script>
   import InputField from "./InputField.svelte";
   import Options from "./Options.svelte";
@@ -6,7 +5,7 @@
   export let active_step;
   export let step_filled = false;
   export let quiz_ender = false;
-
+  let url = window.location.href;
   let formData = {
     name: "",
     email: "",
@@ -27,6 +26,39 @@
   const handleEnd = () => {
     console.log("end");
     console.table(formData);
+    dataConverter(formData);
+  };
+  const dataConverter = (data) => {
+    console.log("converting data");
+
+    let fullName = data.name.split(" ");
+    let convertedData = {
+      email: data.email,
+      health_goal: data.healthGoal,
+      optimization_timeline: data.howSoonLookingToMakeChanges,
+      first_name: fullName[0].toUpperCase(),
+      last_name: fullName[fullName.length - 1].toUpperCase(),
+      phoneNumber: data.phoneNum,
+      pre_parsley_optimizations: data.triedToImproveHealth,
+      pre_parsley_optimizations_other: data.triedToImproveHealthOther,
+      pre_parsley_testing: data.whatTesting,
+    };
+
+    // build healthConcerns into convertedData
+    for (let i = 0; i < data.healthConcerns.length; i++) {
+      convertedData[`health_concern_${i + 1}`] = data.healthConcerns[i];
+    }
+    console.log(convertedData);
+
+    sendData(url);
+  };
+
+  const sendData = (url) => {
+    let params = new URLSearchParams(url.search);
+    params.set("quiz_provided_by", "thesis_quiz");
+
+    let newUrl = url + "?" + params.toString();
+    window.history.pushState({}, "", newUrl);
   };
 
   $: allDone = (() => {
@@ -402,7 +434,7 @@
 <style>
   .form-container {
     border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1); */
     padding: 50px 20px;
     text-align: center;
     max-width: 100%;

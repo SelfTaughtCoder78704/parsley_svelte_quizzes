@@ -1,4 +1,3 @@
-
 <script>
   export let value,
     name,
@@ -34,7 +33,7 @@
         value = val;
         filled = true;
       } else {
-        alert("Please enter a valid phone number");
+        alert("Please enter a valid phone number in the format 123-456-7890");
         filled = false;
       }
     }
