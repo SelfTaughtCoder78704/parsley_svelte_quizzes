@@ -63,11 +63,11 @@ Step 1:
 Step 2:
 
 - Add the following to the custom template
+  Example:
 
-````html
-Example: ```html
+```html
 <div id="svelte-container"></div>
-````
+```
 
 Step 3:
 
