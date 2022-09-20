@@ -62,22 +62,19 @@ Step 1:
 
 Step 2:
 
-- Paste the script tag from the Svelte App -- located in the dist folder -- into the file just like when you install a tracking script.
-- Do the same for the style tag.
-- If you changed the target then add the empty div with the id you used in the target.
+- Add the following to the custom template
 
-Example:
-
-```html
-<script type="module" crossorigin src="/client_quiz_one.js"></script>
-<link rel="stylesheet" href="/style.css" />
-
+````html
+Example: ```html
 <div id="svelte-container"></div>
-```
+````
 
 Step 3:
 
-- Now add those assets to the public folder in your Rails app.
+- Now add those assets to their respective folders in your Rails app.
+- Grab the generated script and style tags from the the `dist` folder and add them to the Rails app. You can then require the js in your page.js and import the css in your page.scss. However, you need to change the .css to .scss
+
+## NOTE: It is better to grab the script that has the .umd.cjs extension. However in your Rails app, just change the extension to .js and remove the .umd.cjs part of the file name.
 
 ## NOTE: Each time you make a change to the svelte app, you will need to rebuild the app and copy the files into the public folder of your Rails app.
 
