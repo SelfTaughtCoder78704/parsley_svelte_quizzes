@@ -1,6 +1,6 @@
 
 <script>
-  export let group = "";
+  export let group = [];
   export let choices = [];
   export let filled = true;
 </script>

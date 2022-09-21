@@ -1,4 +1,15 @@
 <script>
+  import {
+    allChoices,
+    preventativeCareChoices,
+    digestiveHealthChoices,
+    metabolicAndHeartHealthChoices,
+    mentalWellbeingChoices,
+    fertilityPregAndPostpartumChoices,
+    autoImmuneAndInflamationChoices,
+    homonalHealthChoices,
+    unexplainedSymptomsChoices,
+  } from "./choices.js";
   import InputField from "./InputField.svelte";
   import Options from "./Options.svelte";
   import MultiSelect from "./MultiSelect.svelte";
@@ -6,28 +17,53 @@
   export let step_filled = false;
   export let quiz_ender = false;
   let url = window.location.href;
+
+  // Just form data waiting to be filled
   let formData = {
     name: "",
     email: "",
     phoneNum: "",
     healthGoal: "",
-    healthConcerns: "",
-    whatTesting: "",
-    triedToImproveHealth: "",
+    healthConcerns: [],
+    whatTesting: [],
+    triedToImproveHealth: [],
     triedToImproveHealthOther: "",
     howSoonLookingToMakeChanges: "",
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.table(formData);
-  };
+  // this is a dynamic binding to formData.healthConcerns
+  // it maps the items picked in Q4 and then filters out duplicates
+  $: mappedConcerns = formData.healthConcerns
+    .map((concern) => {
+      if (concern === "Preventative Care") {
+        return preventativeCareChoices;
+      } else if (concern === "Digestive Health") {
+        return digestiveHealthChoices;
+      } else if (concern === "Metabolic & Heart Health") {
+        return metabolicAndHeartHealthChoices;
+      } else if (concern === "Mental Wellbeing") {
+        return mentalWellbeingChoices;
+      } else if (concern === "Fertility, Pregnancy & Postpartum") {
+        return fertilityPregAndPostpartumChoices;
+      } else if (concern === "Autoimmune & Inflammation") {
+        return autoImmuneAndInflamationChoices;
+      } else if (concern === "Hormonal Health") {
+        return homonalHealthChoices;
+      } else if (concern === "Unexplained Symptoms") {
+        return unexplainedSymptomsChoices;
+      }
+    })
+    .flat()
+    .filter((v, i, a) => a.findIndex((t) => t.value === v.value) === i);
 
+  // this handles the last question by logging the data and then calling dataConverter(data)
   const handleEnd = () => {
     console.log("end");
     console.table(formData);
     dataConverter(formData);
   };
+
+  // Convert the data into the required shape for iterable and then call sendData(data)
   const dataConverter = (data) => {
     console.log("converting data");
 
@@ -42,17 +78,15 @@
       pre_parsley_optimizations: data.triedToImproveHealth,
       pre_parsley_optimizations_other: data.triedToImproveHealthOther,
       pre_parsley_testing: data.whatTesting,
+      areas_of_concern: data.healthConcerns,
     };
 
-    // build healthConcerns into convertedData
-    for (let i = 0; i < data.healthConcerns.length; i++) {
-      convertedData[`health_concern_${i + 1}`] = data.healthConcerns[i];
-    }
     console.log(convertedData);
 
     sendData(url);
   };
 
+  // Send the data to the server
   const sendData = (url) => {
     let params = new URLSearchParams(url.search);
     params.set("quiz_provided_by", "thesis_quiz");
@@ -60,13 +94,13 @@
     let newUrl = url + "?" + params.toString();
     window.history.pushState({}, "", newUrl);
   };
-
+  // dynmically bound to quiz_ender. The component with this prop ends the quiz currently it is Q7
   $: allDone = (() => {
     quiz_ender === true ? handleEnd() : null;
   })();
 </script>
 
-<form class="form-container" on:submit={handleSubmit}>
+<form class="form-container">
   {#if active_step == "Q1"}
     <h2>What’s your full name?</h2>
     <InputField
@@ -114,257 +148,42 @@
       bind:filled={step_filled}
       bind:group={formData.healthConcerns}
       choices={[
-        { label: "Preventative care", value: "Preventative care" },
-        { label: "Digestive", value: "Digestive" },
+        { label: "Preventative Care", value: "Preventative Care" },
+        { label: "Digestive Health", value: "Digestive Health" },
         {
-          label: "Metabolism & heart health",
-          value: "Metabolism & heart health",
+          label: "Metabolic & Heart Health",
+          value: "Metabolic & Heart Health",
         },
-        { label: "Mental wellbeing", value: "Mental wellbeing" },
+        { label: "Mental Wellbeing", value: "Mental Wellbeing" },
         {
-          label: "Fertility and postpartum",
-          value: "Fertility and postpartum",
+          label: "Fertility, Pregnancy & Postpartum",
+          value: "Fertility, Pregnancy & Postpartum",
         },
         {
-          label: "Autoimmune and inflammation",
-          value: "Autoimmune and inflammation",
+          label: "Autoimmune & Inflammation",
+          value: "Autoimmune & Inflammation",
         },
-        { label: "Hormonal health", value: "Hormonal health" },
-        { label: "Unwell & undiagnosed", value: "Unwell & undiagnosed" },
+        { label: "Hormonal Health", value: "Hormonal Health" },
+        { label: "Unexplained Symptoms", value: "Unexplained Symptoms" },
         { label: "Other", value: "Other" },
       ]}
     />
   {:else if active_step == "Q5"}
+    <!-- loop over formData.healthConcerns and for each of the items in there add them to the choices array -->
     <h2>What testing have you done regarding your health concerns?</h2>
     <MultiSelect
       bind:filled={step_filled}
       bind:group={formData.whatTesting}
-      choices={formData.healthConcerns == "Preventative care"
+      choices={mappedConcerns.length > 0
         ? [
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
+            ...mappedConcerns,
             {
               label: "I haven’t done any testing",
               value: "I haven’t done any testing",
             },
+            { label: "Other", value: "Other" },
           ]
-        : formData.healthConcerns == "Digestive"
-        ? [
-            {
-              label: "GI Effects/ GI MAP specialty testing",
-              value: "GI Effects/ GI MAP specialty testing",
-            },
-            {
-              label: "Food Sensitivity testing",
-              value: "Food Sensitivity testing",
-            },
-            { label: "SIBO", value: "SIBO" },
-            { label: "Thyroid Function", value: "Thyroid Function" },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : formData.healthConcerns == "Metabolism & heart health"
-        ? [
-            { label: "Cardio IQ Panel", value: "Cardio IQ Panel" },
-            {
-              label:
-                "Cardiovascular health and metabolic functioning blood work",
-              value:
-                "Cardiovascular health and metabolic functioning blood work",
-            },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : formData.healthConcerns == "Mental wellbeing"
-        ? [
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : formData.healthConcerns == "Fertility and postpartum"
-        ? [
-            {
-              label: "Hormone Metabolism testing (Ex. DUTCH)",
-              value: "Hormone Metabolism testing (Ex. DUTCH)",
-            },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : formData.healthConcerns == "Autoimmune and inflammation"
-        ? [
-            {
-              label: "C-reactive protein (CRP)",
-              value: "C-reactive protein (CRP)",
-            },
-            {
-              label: "Erythrocyte sedimentation rate (ESR)",
-              value: "Erythrocyte sedimentation rate (ESR)",
-            },
-            {
-              label: "Antinuclear Antibody (ANA)",
-              value: "Antinuclear Antibody (ANA)",
-            },
-            { label: "Reflex testing", value: "Reflex testing" },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : formData.healthConcerns == "Hormonal health"
-        ? [
-            {
-              label: "Hormone Metabolism Testing (Ex. Dutch)",
-              value: "Hormone Metabolism Testing (Ex. Dutch)",
-            },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : formData.healthConcerns == "Unwell & undiagnosed"
-        ? [
-            {
-              label: "Show all tests (consolidate among conditions)",
-              value: "Show all tests (consolidate among conditions)",
-            },
-            {
-              label: "GI Effects/ GI MAP specialty testing",
-              value: "GI Effects/ GI MAP specialty testing",
-            },
-            {
-              label: "Food Sensitivity testing",
-              value: "Food Sensitivity testing",
-            },
-            { label: "SIBO", value: "SIBO" },
-            { label: "Thyroid Function", value: "Thyroid Function" },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Cardio IQ Panel", value: "Cardio IQ Panel" },
-            {
-              label:
-                "Cardiovascular health and metabolic functioning blood work",
-              value:
-                "Cardiovascular health and metabolic functioning blood work",
-            },
-            {
-              label: "Hormone Metabolism testing (Ex. DUTCH)",
-              value: "Hormone Metabolism testing (Ex. DUTCH)",
-            },
-            {
-              label: "C-reactive protein (CRP)",
-              value: "C-reactive protein (CRP)",
-            },
-            {
-              label: "Erythrocyte sedimentation rate (ESR)",
-              value: "Erythrocyte sedimentation rate (ESR)",
-            },
-            {
-              label: "Antinuclear Antibody (ANA)",
-              value: "Antinuclear Antibody (ANA)",
-            },
-            { label: "Reflex testing", value: "Reflex testing" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]
-        : [
-            {
-              label: "GI Effects/ GI MAP specialty testing",
-              value: "GI Effects/ GI MAP specialty testing",
-            },
-            {
-              label: "Food Sensitivity testing",
-              value: "Food Sensitivity testing",
-            },
-            { label: "SIBO", value: "SIBO" },
-            { label: "Thyroid Function", value: "Thyroid Function" },
-            {
-              label: "Essential Nutrients (Baseline Panel)",
-              value: "Essential Nutrients (Baseline Panel)",
-            },
-            { label: "Hormone Panel", value: "Hormone Panel" },
-            { label: "Cardio IQ Panel", value: "Cardio IQ Panel" },
-            {
-              label:
-                "Cardiovascular health and metabolic functioning blood work",
-              value:
-                "Cardiovascular health and metabolic functioning blood work",
-            },
-            {
-              label: "Hormone Metabolism testing (Ex. DUTCH)",
-              value: "Hormone Metabolism testing (Ex. DUTCH)",
-            },
-            {
-              label: "C-reactive protein (CRP)",
-              value: "C-reactive protein (CRP)",
-            },
-            {
-              label: "Erythrocyte sedimentation rate (ESR)",
-              value: "Erythrocyte sedimentation rate (ESR)",
-            },
-            {
-              label: "Antinuclear Antibody (ANA)",
-              value: "Antinuclear Antibody (ANA)",
-            },
-            { label: "Reflex testing", value: "Reflex testing" },
-            { label: "Other", value: "Other" },
-            {
-              label: "I haven’t done any testing",
-              value: "I haven’t done any testing",
-            },
-          ]}
+        : [...allChoices]}
     />
   {:else if active_step == "Q6"}
     <h2>What have you tried to improve your health?</h2>
@@ -426,7 +245,6 @@
     <div class="message">
       <h2>Thanks for telling us about you!</h2>
       <p>Parsley will be in touch within the next 24 hours to</p>
-      <button class="btn submit" on:click={handleSubmit}>Finish </button>
     </div>
   {/if}
 </form>
@@ -434,29 +252,12 @@
 <style>
   .form-container {
     border-radius: 10px;
-    /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1); */
     padding: 50px 20px;
     text-align: center;
     max-width: 100%;
     width: 350px;
   }
-  .btn {
-    color: white;
-    padding: 0.5rem 0;
-    margin-top: 0.5rem;
-    display: inline-block;
-    width: 100%;
-    border-radius: 0.25rem;
-    cursor: pointer;
-  }
-  .submit {
-    background: linear-gradient(to bottom, #44c767 5%, #50b01c 100%);
-    background-color: #44c767;
-  }
-  .submit:hover {
-    background: linear-gradient(to bottom, #50b01c 5%, #44c767 100%);
-    background-color: #50b01c;
-  }
+
   .message {
     text-align: center;
   }
